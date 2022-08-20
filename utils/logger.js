@@ -6,7 +6,7 @@ const { env = {} } = process
 
 const enableLog = env.ENABLE_WEBASSET_LOG || 'yes'
 
-export const logger = nonalog('webrun', {
+export const logger = nonalog('webasset', {
   enable: enableLog === 'yes'
 })
 
