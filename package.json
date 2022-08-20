@@ -1,0 +1,43 @@
+{
+  "version": "0.0.1",
+  "name": "webrun",
+  "description": "To build and run web with template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com:ndaidong/webrun.git"
+  },
+  "author": "@ndaidong",
+  "engines": {
+    "node": ">= 14"
+  },
+  "main": "./index.js",
+  "type": "module",
+  "scripts": {
+    "lint": "standard .",
+    "pretest": "npm run lint",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --verbose --coverage=true"
+  },
+  "standard": {
+    "ignore": [
+      "/dist"
+    ]
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.8",
+    "bellajs": "^11.0.4",
+    "clean-css": "^5.3.1",
+    "esbuild": "^0.14.51",
+    "html-minifier-terser": "7.0.0-beta.0",
+    "linkedom": "^0.14.12",
+    "node-schedule": "^2.1.0",
+    "nonalog": "^1.0.0",
+    "nunjucks": "^3.2.3",
+    "postcss": "^8.4.14",
+    "postcss-import": "^14.1.0",
+    "pretti": "^2.0.1",
+    "strip-css-comments": "^5.0.0"
+  },
+  "devDependencies": {
+    "jest": "^28.1.3"
+  }
+}

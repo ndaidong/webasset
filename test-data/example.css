@@ -1,0 +1,12 @@
+@import 'example.base.css';
+
+header {
+  position: fixed;
+  z-index: 99;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: var(--header-height);
+  white-space: nowrap;
+  display: flex;
+}
