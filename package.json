@@ -1,10 +1,10 @@
 {
   "version": "0.0.1",
-  "name": "webrun",
-  "description": "To build and run web with template",
+  "name": "webasset",
+  "description": "To handle nunjucks template, javascript & css for web",
   "repository": {
     "type": "git",
-    "url": "https://github.com:ndaidong/webrun.git"
+    "url": "https://github.com:ndaidong/webasset.git"
   },
   "author": "@ndaidong",
   "engines": {
