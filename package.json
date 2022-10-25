@@ -1,5 +1,5 @@
 {
-  "version": "0.0.4",
+  "version": "0.0.5",
   "name": "webasset",
   "description": "To handle nunjucks template, javascript & css for web",
   "repository": {
@@ -34,8 +34,10 @@
     "nunjucks": "^3.2.3",
     "postcss": "^8.4.18",
     "postcss-import": "^15.0.0",
+    "postcss-nesting": "^10.2.0",
     "pretti": "^2.0.1",
-    "strip-css-comments": "^5.0.0"
+    "strip-css-comments": "^5.0.0",
+    "terser": "^5.15.1"
   },
   "devDependencies": {
     "jest": "^29.2.2",

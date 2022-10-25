@@ -3,6 +3,7 @@
 import postcss from 'postcss'
 import autoprefixer from 'autoprefixer'
 import atimport from 'postcss-import'
+import postcssNesting from 'postcss-nesting'
 
 import CleanCSS from 'clean-css'
 import stripCssComments from 'strip-css-comments'
@@ -13,13 +14,27 @@ import { readFileAsync, writeFileAsync } from './pathery.js'
 
 const POSTCSS_PLUGINS = [
   atimport,
-  autoprefixer
+  autoprefixer,
+  postcssNesting
 ]
 
 const removeComments = (css) => {
   return stripCssComments(css, {
     preserve: false
   })
+}
+
+export const minify = async (css) => {
+  const minOpt = {
+    level: 2,
+    format: 'beautify'
+  }
+  const cleaner = new CleanCSS(minOpt)
+  const cleanedCSS = await cleaner.minify(css)
+
+  const { styles } = cleanedCSS
+
+  return removeComments(styles)
 }
 
 const buildToFile = async (rawcss, fpath, tpath) => {
@@ -31,16 +46,7 @@ const buildToFile = async (rawcss, fpath, tpath) => {
     map: true
   })
 
-  const minOpt = {
-    level: 2,
-    format: 'beautify'
-  }
-  const cleaner = new CleanCSS(minOpt)
-  const cleanedCSS = await cleaner.minify(output.css)
-
-  const { styles } = cleanedCSS
-
-  const css = removeComments(styles)
+  const css = await minify(output.css)
   await writeFileAsync(tpath, css)
 }
 
@@ -58,16 +64,9 @@ const transform = async (rawcss, fpath) => {
     map: false
   })
 
-  const minOpt = {
-    level: 2,
-    format: 'beautify'
-  }
-  const cleaner = new CleanCSS(minOpt)
-  const cleanedCSS = await cleaner.minify(output.css)
+  const css = await minify(output.css)
 
-  const { styles } = cleanedCSS
-
-  return styles
+  return css
 }
 
 export const cssify = async (fpath) => {
