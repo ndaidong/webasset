@@ -1,5 +1,6 @@
 // htmlify.js
-import { clone } from 'bellajs'
+
+import { clone, unique } from 'bellajs'
 import nunjucks from 'nunjucks'
 import pretty from 'pretti'
 import { minify as htmlmin } from 'html-minifier-terser'
@@ -35,19 +36,36 @@ const prettify = (html) => {
   return pretty(html, { ocd: true })
 }
 
-const normalize = (html, revision = '') => {
-  const document = new DOMParser().parseFromString(html, 'text/html')
+export const domify = (html) => {
+  return new DOMParser().parseFromString(html, 'text/html')
+}
 
+const normalize = (html, revision = '') => { // eslint-disable-line
+  const document = domify(html)
+
+  const cssGroup = []
   const cssLinks = []
   document.querySelectorAll('link[rel="stylesheet"]').forEach((elm) => {
     const href = elm.getAttribute('href') || ''
-    if (href && !isAbsoluteURL(href)) {
+    const group = elm.getAttribute('group') || ''
+    if (group) {
+      cssGroup.push(group)
+    } else if (href && !isAbsoluteURL(href)) {
       cssLinks.push(href)
-      elm.parentNode.removeChild(elm)
     }
+    elm.parentNode.removeChild(elm)
   })
   const head = document.querySelector('head')
-  cssLinks.forEach((href) => {
+
+  unique(cssGroup).forEach((groupName) => {
+    const fpath = `/css/${groupName}.css?rev=${revision}`
+    const styleTag = document.createElement('link')
+    styleTag.setAttribute('type', 'text/css')
+    styleTag.setAttribute('href', fpath)
+    styleTag.setAttribute('rel', 'stylesheet')
+    head.appendChild(styleTag)
+  })
+  unique(cssLinks).forEach((href) => {
     const fpath = href + '?rev=' + revision
     const styleTag = document.createElement('link')
     styleTag.setAttribute('type', 'text/css')
@@ -56,24 +74,35 @@ const normalize = (html, revision = '') => {
     head.appendChild(styleTag)
   })
 
+  const jsGroup = []
   const jsLinks = []
   document.querySelectorAll('script').forEach((elm) => {
     const href = elm.getAttribute('src') || ''
     const type = elm.getAttribute('type') || ''
     const defer = elm.getAttribute('defer') || ''
     const xasync = elm.getAttribute('async') || ''
-    if (href && !isAbsoluteURL(href)) {
+    const group = elm.getAttribute('group') || ''
+    if (group) {
+      jsGroup.push(group)
+    } else if (href && !isAbsoluteURL(href)) {
       jsLinks.push({
         href,
         type,
         defer,
         xasync
       })
-      elm.parentNode.removeChild(elm)
     }
+    elm.parentNode.removeChild(elm)
   })
   const body = document.querySelector('body')
-  jsLinks.forEach(({ href, type, defer, xasync }) => {
+
+  unique(jsGroup).forEach((groupName) => {
+    const scriptTag = document.createElement('script')
+    scriptTag.setAttribute('src', `/js/${groupName}.js?rev=${revision}`)
+    body.appendChild(scriptTag)
+  })
+
+  unique(jsLinks).forEach(({ href, type, defer, xasync }) => {
     const fpath = href + '?rev=' + revision
     const scriptTag = document.createElement('script')
     scriptTag.setAttribute('src', fpath)
@@ -88,6 +117,7 @@ const normalize = (html, revision = '') => {
     }
     body.appendChild(scriptTag)
   })
+
   const output = Array.from(document.children).map(it => it.outerHTML).join('')
   return output ? '<!DOCTYPE html>' + output : ''
 }

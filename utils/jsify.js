@@ -4,12 +4,14 @@ import esbuild from 'esbuild'
 
 import { debug } from './logger.js'
 
+export { minify } from 'terser'
+
 const buildToFile = async (fromPath, toPath) => {
   const output = await esbuild.buildSync({
     entryPoints: [fromPath],
     outfile: toPath,
     bundle: true,
-    platform: 'node',
+    platform: 'browser',
     target: 'esnext',
     format: 'esm',
     pure: ['console.log', 'debug', 'alert'],
@@ -30,6 +32,7 @@ const transform = async (input) => {
   const output = await esbuild.build({
     entryPoints: [input],
     bundle: true,
+    platform: 'browser',
     target: 'esnext',
     format: 'esm',
     legalComments: 'none',

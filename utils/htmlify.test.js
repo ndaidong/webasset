@@ -31,11 +31,9 @@ describe('Validate htmlify methods', () => {
     expect(liveHtml.length < html.length).toBeTruthy()
 
     const wrongFileHtml = await htmlify('somepage.html', data)
-    console.log(wrongFileHtml)
     expect(wrongFileHtml === '').toBeTruthy()
 
     const errorFileHtml = await htmlify('errorpage.html', data)
-    console.log(errorFileHtml)
     expect(errorFileHtml === '').toBeTruthy()
   })
 })
