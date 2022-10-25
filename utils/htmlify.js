@@ -76,15 +76,26 @@ const normalize = (html, revision = '') => { // eslint-disable-line
 
   const jsGroup = []
   const jsLinks = []
-  document.querySelectorAll('script').forEach((elm) => {
+  document.querySelectorAll('script').map((elm) => {
     const href = elm.getAttribute('src') || ''
+    return {
+      href,
+      elm
+    }
+  }).filter(({ href }) => {
+    return href !== '' && !isAbsoluteURL(href)
+  }).forEach((item) => {
+    const {
+      href,
+      elm
+    } = item
     const type = elm.getAttribute('type') || ''
     const defer = elm.getAttribute('defer') || ''
     const xasync = elm.getAttribute('async') || ''
     const group = elm.getAttribute('group') || ''
     if (group) {
       jsGroup.push(group)
-    } else if (href && !isAbsoluteURL(href)) {
+    } else {
       jsLinks.push({
         href,
         type,
