@@ -59,18 +59,33 @@ const normalize = (html, revision = '') => {
   const jsLinks = []
   document.querySelectorAll('script').forEach((elm) => {
     const href = elm.getAttribute('src') || ''
+    const type = elm.getAttribute('type') || ''
+    const defer = elm.getAttribute('defer') || ''
+    const xasync = elm.getAttribute('async') || ''
     if (href && !isAbsoluteURL(href)) {
-      jsLinks.push(href)
+      jsLinks.push({
+        href,
+        type,
+        defer,
+        xasync
+      })
       elm.parentNode.removeChild(elm)
     }
   })
   const body = document.querySelector('body')
-  jsLinks.forEach((href) => {
+  jsLinks.forEach(({ href, type, defer, xasync }) => {
     const fpath = href + '?rev=' + revision
     const scriptTag = document.createElement('script')
-    scriptTag.setAttribute('async')
     scriptTag.setAttribute('src', fpath)
-    scriptTag.setAttribute('type', 'module')
+    if (type) {
+      scriptTag.setAttribute('type', type)
+    }
+    if (xasync) {
+      scriptTag.setAttribute('async')
+    }
+    if (defer) {
+      scriptTag.setAttribute('defer')
+    }
     body.appendChild(scriptTag)
   })
   const output = Array.from(document.children).map(it => it.outerHTML).join('')
