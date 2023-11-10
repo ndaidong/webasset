@@ -15,19 +15,19 @@ import { readFileAsync, writeFileAsync } from './pathery.js'
 const POSTCSS_PLUGINS = [
   atimport,
   autoprefixer,
-  postcssNesting
+  postcssNesting,
 ]
 
 const removeComments = (css) => {
   return stripCssComments(css, {
-    preserve: false
+    preserve: false,
   })
 }
 
 export const minify = async (css) => {
   const minOpt = {
     level: 2,
-    format: 'beautify'
+    format: 'beautify',
   }
   const cleaner = new CleanCSS(minOpt)
   const cleanedCSS = await cleaner.minify(css)
@@ -43,7 +43,7 @@ const buildToFile = async (rawcss, fpath, tpath) => {
   const output = await postcss(plugins).process(rawcss, {
     from: fpath,
     to: tpath,
-    map: true
+    map: true,
   })
 
   const css = await minify(output.css)
@@ -61,7 +61,7 @@ const transform = async (rawcss, fpath) => {
   const plugins = [...POSTCSS_PLUGINS]
   const output = await postcss(plugins).process(rawcss, {
     from: fpath,
-    map: false
+    map: false,
   })
 
   const css = await minify(output.css)

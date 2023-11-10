@@ -17,7 +17,7 @@ const buildToFile = async (fromPath, toPath) => {
     pure: ['console.log', 'debug', 'alert'],
     legalComments: 'none',
     sourcemap: true,
-    minify: true
+    minify: true,
   })
   return output.code
 }
@@ -37,7 +37,7 @@ const transform = async (input) => {
     format: 'esm',
     legalComments: 'none',
     minify: false,
-    write: false
+    write: false,
   })
   return output.outputFiles[0].text
 }
