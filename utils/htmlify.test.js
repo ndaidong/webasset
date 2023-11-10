@@ -7,7 +7,7 @@ describe('Validate htmlify methods', () => {
   test('Check if setup/getState', () => {
     const data = {
       name: 'webasset',
-      REVISION: '12345678'
+      REVISION: '12345678',
     }
     setup('test-data/views', {}, data)
     const state = getState()
@@ -17,7 +17,7 @@ describe('Validate htmlify methods', () => {
   test('Check rendering html from template', async () => {
     const data = {
       pageTitle: 'Hello webasset',
-      siteName: 'webasset'
+      siteName: 'webasset',
     }
     const html = await htmlify('index.html', data)
     expect(html.includes(data.pageTitle)).toBeTruthy()

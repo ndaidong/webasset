@@ -27,7 +27,7 @@ const minify = async (html = '') => {
     collapseWhitespace: true,
     collapseBooleanAttributes: true,
     conservativeCollapse: false,
-    removeTagWhitespace: false
+    removeTagWhitespace: false,
   })
   return minifiedHtml
 }
@@ -80,14 +80,14 @@ const normalize = (html, revision = '') => { // eslint-disable-line
     const href = elm.getAttribute('src') || ''
     return {
       href,
-      elm
+      elm,
     }
   }).filter(({ href }) => {
     return href !== '' && !isAbsoluteURL(href)
   }).forEach((item) => {
     const {
       href,
-      elm
+      elm,
     } = item
     const type = elm.getAttribute('type') || ''
     const defer = elm.getAttribute('defer') || ''
@@ -100,7 +100,7 @@ const normalize = (html, revision = '') => { // eslint-disable-line
         href,
         type,
         defer,
-        xasync
+        xasync,
       })
     }
     elm.parentNode.removeChild(elm)
@@ -152,7 +152,7 @@ export const htmlify = async (tplFile, data = {}, isLive = false) => {
   const njk = await readFileAsync(fpath)
   const rawHtml = await parse(njk, {
     ...state.data,
-    ...data
+    ...data,
   })
   const html = normalize(rawHtml, state.data.REVISION)
   const output = isLive ? await minify(html) : prettify(html)
