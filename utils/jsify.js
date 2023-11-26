@@ -1,10 +1,9 @@
 // jsify.js
 
 import esbuild from 'esbuild'
+import { string } from '@tdewolff/minify'
 
 import { debug } from './logger.js'
-
-export { minify } from 'terser'
 
 const buildToFile = async (fromPath, toPath) => {
   const output = await esbuild.buildSync({
@@ -26,6 +25,11 @@ export const build = async (fpath, tpath) => {
   debug(`Processing JS file ${fpath}`)
   await buildToFile(fpath, tpath)
   debug(`Finish processing JS file ${fpath} to ${tpath}`)
+}
+
+export const minify = async (js) => {
+  const s = string('text/javascript', js)
+  return s
 }
 
 const transform = async (input) => {

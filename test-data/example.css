@@ -10,3 +10,21 @@ header {
   white-space: nowrap;
   display: flex;
 }
+
+/* This is another comment */
+
+.foo {
+  color: red;
+
+  &:hover {
+    color: green;
+  }
+
+  > .bar {
+    color: blue;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    color: cyan;
+  }
+}

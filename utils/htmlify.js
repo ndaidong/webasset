@@ -3,7 +3,7 @@
 import { clone, unique } from 'bellajs'
 import nunjucks from 'nunjucks'
 import pretty from 'pretti'
-import { minify as htmlmin } from 'html-minifier-terser'
+import { string } from '@tdewolff/minify'
 import { DOMParser } from 'linkedom'
 
 import { debug, error } from './logger.js'
@@ -13,23 +13,8 @@ import { readFileAsync, isAbsoluteURL } from './pathery.js'
 const state = {}
 
 const minify = async (html = '') => {
-  const minifiedHtml = await htmlmin(html, {
-    useShortDoctype: true,
-    decodeEntities: true,
-    minifyCSS: false,
-    minifyJS: false,
-    removeComments: true,
-    removeEmptyElements: false,
-    removeEmptyAttributes: true,
-    removeRedundantAttributes: true,
-    removeScriptTypeAttributes: true,
-    removeStyleLinkTypeAttributes: true,
-    collapseWhitespace: true,
-    collapseBooleanAttributes: true,
-    conservativeCollapse: false,
-    removeTagWhitespace: false,
-  })
-  return minifiedHtml
+  const s = string('text/html', html)
+  return s
 }
 
 const prettify = (html) => {
