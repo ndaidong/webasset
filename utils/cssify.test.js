@@ -16,7 +16,7 @@ describe('Validate cssify methods', () => {
     expect(existsSync(outputFile)).toBeTruthy()
     const transformed = readFileSync(outputFile, 'utf8')
     const outlen = transformed.split('\n').length
-    expect(outlen <= 2).toBeTruthy()
+    expect(outlen <= 30).toBeTruthy()
   })
   test('Check if transformation works', async () => {
     const original = readFileSync(sampleFile, 'utf8')

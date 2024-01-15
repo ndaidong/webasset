@@ -1,7 +1,7 @@
 // jsify.js
 
 import esbuild from 'esbuild'
-import { string } from '@tdewolff/minify'
+import { minify as jmin } from 'terser'
 
 import { debug } from './logger.js'
 
@@ -28,8 +28,16 @@ export const build = async (fpath, tpath) => {
 }
 
 export const minify = async (js) => {
-  const s = string('text/javascript', js)
-  return s
+  const result = await jmin(js, {
+    sourceMap: false,
+    format: {
+      comments: false,
+      ecma: 5,
+      quote_style: 1,
+      semicolons: false,
+    },
+  })
+  return result.code
 }
 
 const transform = async (input) => {

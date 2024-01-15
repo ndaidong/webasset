@@ -5,7 +5,8 @@ import autoprefixer from 'autoprefixer'
 import atimport from 'postcss-import'
 import postcssNesting from 'postcss-nesting'
 
-import { string } from '@tdewolff/minify'
+import CleanCSS from 'clean-css'
+import stripCssComments from 'strip-css-comments'
 
 import { debug } from './logger.js'
 
@@ -17,9 +18,23 @@ const POSTCSS_PLUGINS = [
   postcssNesting,
 ]
 
+const removeComments = (css) => {
+  return stripCssComments(css, {
+    preserve: false,
+  })
+}
+
 export const minify = async (css) => {
-  const s = string('text/css', css)
-  return s
+  const minOpt = {
+    level: 2,
+    format: 'beautify',
+  }
+  const cleaner = new CleanCSS(minOpt)
+  const cleanedCSS = await cleaner.minify(css)
+
+  const { styles } = cleanedCSS
+
+  return removeComments(styles)
 }
 
 const buildToFile = async (rawcss, fpath, tpath) => {
