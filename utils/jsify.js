@@ -1,35 +1,16 @@
 // jsify.js
 
 import esbuild from 'esbuild'
-import { minify as jmin } from 'terser'
+import swc from '@swc/core'
+
+import { writeFileAsync } from './pathery.js'
 
 import { debug } from './logger.js'
 
-const buildToFile = async (fromPath, toPath) => {
-  const output = await esbuild.buildSync({
-    entryPoints: [fromPath],
-    outfile: toPath,
-    bundle: true,
-    platform: 'browser',
-    target: 'esnext',
-    format: 'esm',
-    pure: ['console.log', 'debug', 'alert'],
-    legalComments: 'none',
-    sourcemap: true,
-    minify: true,
-  })
-  return output.code
-}
-
-export const build = async (fpath, tpath) => {
-  debug(`Processing JS file ${fpath}`)
-  await buildToFile(fpath, tpath)
-  debug(`Finish processing JS file ${fpath} to ${tpath}`)
-}
-
 export const minify = async (js) => {
-  const result = await jmin(js, {
+  const result = await swc.minify(js, {
     sourceMap: false,
+    module: true,
     format: {
       comments: false,
       ecma: 5,
@@ -37,7 +18,7 @@ export const minify = async (js) => {
       semicolons: false,
     },
   })
-  return result.code
+  return result?.code || ''
 }
 
 const transform = async (input) => {
@@ -51,7 +32,8 @@ const transform = async (input) => {
     minify: false,
     write: false,
   })
-  return output.outputFiles[0].text
+  const code = output?.outputFiles[0]?.text || ''
+  return minify(code)
 }
 
 export const jsify = async (fpath) => {
@@ -59,4 +41,12 @@ export const jsify = async (fpath) => {
   const content = await transform(fpath)
   debug(`Finish processing JS file ${fpath}`)
   return content
+}
+
+export const build = async (fpath, tpath) => {
+  debug(`Processing JS file ${fpath}`)
+  const code = await jsify(fpath)
+  await writeFileAsync(tpath, code)
+  debug(`Finish processing JS file ${fpath} to ${tpath}`)
+  return code
 }

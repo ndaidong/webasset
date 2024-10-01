@@ -1,5 +1,7 @@
 // logger
 
+import process from 'node:process'
+
 import { logger as nonalog } from 'nonalog'
 
 const { env = {} } = process
