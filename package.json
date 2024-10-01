@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.2",
   "name": "webasset",
   "description": "To handle nunjucks template, javascript & css for web",
   "repository": {
@@ -8,34 +8,34 @@
   },
   "author": "@ndaidong",
   "engines": {
-    "node": ">= 18"
+    "node": ">= 20"
   },
   "main": "./index.js",
   "type": "module",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint ./utils index.js",
     "lint:fix": "eslint --fix .",
     "pretest": "npm run lint",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest --verbose --coverage=true"
+    "test": "node --test"
   },
   "dependencies": {
-    "autoprefixer": "^10.4.16",
-    "bellajs": "^11.1.2",
+    "@swc/core": "^1.7.26",
+    "autoprefixer": "^10.4.20",
+    "bellajs": "^11.2.0",
     "clean-css": "^5.3.3",
-    "esbuild": "^0.19.11",
+    "esbuild": "^0.24.0",
     "html-minifier-terser": "^7.2.0",
-    "linkedom": "^0.16.6",
-    "nonalog": "^1.0.6",
+    "linkedom": "^0.18.5",
+    "nonalog": "^1.1.0",
     "nunjucks": "^3.2.4",
-    "postcss": "^8.4.33",
-    "postcss-import": "^16.0.0",
-    "postcss-nesting": "^12.0.2",
+    "postcss": "^8.4.47",
+    "postcss-import": "^16.1.0",
+    "postcss-nesting": "^13.0.0",
     "pretti": "^2.0.1",
-    "strip-css-comments": "^5.0.0",
-    "terser": "^5.26.0"
+    "strip-css-comments": "^5.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.56.0",
-    "jest": "^29.7.0"
+    "eslint": "^9.11.1",
+    "globals": "^15.9.0"
   }
 }

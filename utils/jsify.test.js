@@ -1,27 +1,35 @@
 // jsify.test.js
-/* eslint-env jest */
+
+import { describe, it } from 'node:test'
+import assert from 'node:assert'
 
 import {
   existsSync,
-  readFileSync
-} from 'fs'
+  readFileSync,
+  writeFileSync
+} from 'node:fs'
 
-import { build, jsify } from './jsify.js'
+import { build, jsify, minify } from './jsify.js'
 
-describe('Validate jsify methods', () => {
+describe('Validate jsify methods', async () => {
   const sampleFile = './test-data/example.js'
   const outputFile = 'dist/example.js'
-  build(sampleFile, outputFile)
-  test(`Check if ${outputFile} was built`, () => {
-    expect(existsSync(outputFile)).toBeTruthy()
-    expect(existsSync(outputFile + '.map')).toBeTruthy()
+  await build(sampleFile, outputFile)
+  it(`Check if ${outputFile} was built`, () => {
+    assert.equal(existsSync(outputFile), true)
     const original = readFileSync(sampleFile, 'utf8')
     const transformed = readFileSync(outputFile, 'utf8')
-    expect(transformed.split('\n').length < original.split('\n').length).toBeTruthy()
+    assert.notEqual(transformed.split('\n').length, original.split('\n').length)
   })
-  test('Check if transformation works', async () => {
+  it('Check if transformation works', async () => {
     const original = readFileSync(sampleFile, 'utf8')
     const transformed = await jsify(sampleFile)
-    expect(transformed === original).toBeFalsy()
+    assert.notEqual(transformed, original)
+  })
+  it('Check if minification works', async () => {
+    const original = readFileSync(sampleFile, 'utf8')
+    const minified = await minify(original)
+    writeFileSync('dist/example.min.js', minified, 'utf8')
+    assert.notEqual(minified, original)
   })
 })

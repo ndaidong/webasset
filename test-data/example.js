@@ -2,6 +2,8 @@
 
 export { genid } from 'bellajs'
 
+import { add } from './helper.js'
+
 const isString = (val) => {
   return String(val) === val
 }
@@ -10,6 +12,7 @@ const isElement = (v) => {
   return {}.toString.call(v).match(/^\[object HTML\w*Element]$/) !== null
 }
 
+// Do this on that
 export const onReady = (fn) => {
   const rt = document.readyState
   const c = rt !== 'loading'
@@ -29,4 +32,8 @@ export const insertElement = (tag, root, before) => {
   const parent = !root ? document.body : getElement(root)
   const beforeNode = before === 0 ? root.firstChild : getElement(before)
   return parent.insertBefore(node, beforeNode)
+}
+
+export const plus7 = (a, b) => {
+  return add(a, b) + 7
 }

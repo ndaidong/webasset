@@ -1,26 +1,28 @@
 // cssify.test.js
-/* eslint-env jest */
 
 import {
   existsSync,
   readFileSync
-} from 'fs'
+} from 'node:fs'
+
+import { describe, it } from 'node:test'
+import assert from 'node:assert'
 
 import { build, cssify } from './cssify.js'
 
 describe('Validate cssify methods', () => {
   const sampleFile = './test-data/example.css'
   const outputFile = 'dist/example.css'
-  test(`Check if ${outputFile} was built`, async () => {
+  it(`Check if ${outputFile} was built`, async () => {
     await build(sampleFile, outputFile)
-    expect(existsSync(outputFile)).toBeTruthy()
+    assert.equal(existsSync(outputFile), true)
     const transformed = readFileSync(outputFile, 'utf8')
     const outlen = transformed.split('\n').length
-    expect(outlen <= 30).toBeTruthy()
+    assert.equal(outlen <= 30, true)
   })
-  test('Check if transformation works', async () => {
+  it('Check if transformation works', async () => {
     const original = readFileSync(sampleFile, 'utf8')
     const transformed = await cssify(sampleFile)
-    expect(transformed === original).toBeFalsy()
+    assert.notEqual(transformed, original)
   })
 })

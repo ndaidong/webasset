@@ -40,7 +40,7 @@ export const domify = (html) => {
   return new DOMParser().parseFromString(html, 'text/html')
 }
 
-const normalize = (html, revision = '') => { // eslint-disable-line
+const normalize = (html, revision = '') => {
   const document = domify(html)
 
   const cssGroup = []

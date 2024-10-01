@@ -2,10 +2,11 @@
 
 import {
   existsSync,
-  readdirSync,
   writeFile,
   promises
-} from 'fs'
+} from 'node:fs'
+
+export { existsSync, readdirSync } from 'node:fs'
 
 export const isAbsoluteURL = (file = '') => {
   const f = String(file)
@@ -27,5 +28,3 @@ export const writeFileAsync = (f, content) => {
     })
   })
 }
-
-export { existsSync, readdirSync }
