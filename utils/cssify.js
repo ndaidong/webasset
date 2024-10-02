@@ -5,12 +5,13 @@ import autoprefixer from 'autoprefixer'
 import atimport from 'postcss-import'
 import postcssNesting from 'postcss-nesting'
 
-import CleanCSS from 'clean-css'
-import stripCssComments from 'strip-css-comments'
+import beautify from 'js-beautify'
+
+import { minifyCSS } from './minifier.js'
 
 import { debug } from './logger.js'
 
-import { readFileAsync, writeFileAsync } from './pathery.js'
+import { readFileAsync } from './pathery.js'
 
 const POSTCSS_PLUGINS = [
   atimport,
@@ -18,61 +19,20 @@ const POSTCSS_PLUGINS = [
   postcssNesting,
 ]
 
-const removeComments = (css) => {
-  return stripCssComments(css, {
-    preserve: false,
-  })
-}
-
-export const minify = async (css) => {
-  const minOpt = {
-    level: 2,
-    format: 'beautify',
-  }
-  const cleaner = new CleanCSS(minOpt)
-  const cleanedCSS = await cleaner.minify(css)
-
-  const { styles } = cleanedCSS
-
-  return removeComments(styles)
-}
-
-const buildToFile = async (rawcss, fpath, tpath) => {
-  const plugins = [...POSTCSS_PLUGINS]
-
-  const output = await postcss(plugins).process(rawcss, {
-    from: fpath,
-    to: tpath,
-    map: true,
-  })
-
-  const css = await minify(output.css)
-  await writeFileAsync(tpath, css)
-}
-
-export const build = async (fpath, tpath) => {
-  debug(`Processing CSS file ${fpath}`)
-  const rawCSS = await readFileAsync(fpath)
-  await buildToFile(rawCSS, fpath, tpath)
-  debug(`Finish processing CSS file ${fpath} to ${tpath}`)
-}
-
-const transform = async (rawcss, fpath) => {
+export const transform = async (rawcss, fpath, isLive = false) => {
   const plugins = [...POSTCSS_PLUGINS]
   const output = await postcss(plugins).process(rawcss, {
     from: fpath,
     map: false,
   })
-
-  const css = await minify(output.css)
-
-  return css
+  const { css } = output
+  return isLive ? minifyCSS(css) : beautify.css(css, { indent_size: 2 })
 }
 
-export const cssify = async (fpath) => {
+export const transformFile = async (fpath, isLive = false) => {
   debug(`Processing CSS file ${fpath}`)
   const rawCSS = await readFileAsync(fpath)
-  const content = await transform(rawCSS, fpath)
+  const content = await transform(rawCSS, fpath, isLive)
   debug(`Finish processing CSS file ${fpath}`)
   return content
 }
