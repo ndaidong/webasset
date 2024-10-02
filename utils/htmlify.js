@@ -2,8 +2,8 @@
 
 import { clone, unique } from 'bellajs'
 import nunjucks from 'nunjucks'
-import pretty from 'pretti'
 import { DOMParser } from 'linkedom'
+import beautify from 'js-beautify'
 
 import { minifyHtml } from './minifier.js'
 
@@ -13,8 +13,8 @@ import { debug, error } from './logger.js'
 
 const state = {}
 
-const prettify = (html) => {
-  return pretty(html, { ocd: true })
+export const prettify = (html) => {
+  return beautify.html(html, { indent_size: 2 })
 }
 
 export const domify = (html) => {
