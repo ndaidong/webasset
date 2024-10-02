@@ -3,34 +3,15 @@
 import { clone, unique } from 'bellajs'
 import nunjucks from 'nunjucks'
 import pretty from 'pretti'
-import { minify as htmlmin } from 'html-minifier-terser'
 import { DOMParser } from 'linkedom'
 
-import { debug, error } from './logger.js'
+import { minifyHtml } from './minifier.js'
 
 import { readFileAsync, isAbsoluteURL } from './pathery.js'
 
-const state = {}
+import { debug, error } from './logger.js'
 
-const minify = async (html = '') => {
-  const minifiedHtml = await htmlmin(html, {
-    useShortDoctype: true,
-    decodeEntities: true,
-    minifyCSS: true,
-    minifyJS: true,
-    removeComments: true,
-    removeEmptyElements: false,
-    removeEmptyAttributes: true,
-    removeRedundantAttributes: true,
-    removeScriptTypeAttributes: false,
-    removeStyleLinkTypeAttributes: false,
-    collapseWhitespace: true,
-    collapseBooleanAttributes: true,
-    conservativeCollapse: false,
-    removeTagWhitespace: false,
-  })
-  return minifiedHtml
-}
+const state = {}
 
 const prettify = (html) => {
   return pretty(html, { ocd: true })
@@ -155,7 +136,7 @@ export const htmlify = async (tplFile, data = {}, isLive = false) => {
     ...data,
   })
   const html = normalize(rawHtml, state.data.REVISION)
-  const output = isLive ? await minify(html) : prettify(html)
+  const output = isLive ? minifyHtml(html) : prettify(html)
   debug(`Finish processing HTML file ${fpath}`)
   return output
 }

@@ -1,24 +1,15 @@
 // jsify.js
 
 import esbuild from 'esbuild'
-import swc from '@swc/core'
+
+import { minifyJS } from './minifier.js'
 
 import { writeFileAsync } from './pathery.js'
 
 import { debug } from './logger.js'
 
 export const minify = async (js) => {
-  const result = await swc.minify(js, {
-    sourceMap: false,
-    module: true,
-    format: {
-      comments: false,
-      ecma: 5,
-      quote_style: 1,
-      semicolons: false,
-    },
-  })
-  return result?.code || ''
+  return minifyJS(js)
 }
 
 const transform = async (input) => {
@@ -29,11 +20,12 @@ const transform = async (input) => {
     target: 'esnext',
     format: 'esm',
     legalComments: 'none',
-    minify: false,
+    minify: true,
     write: false,
+    treeShaking: true,
   })
   const code = output?.outputFiles[0]?.text || ''
-  return minify(code)
+  return code
 }
 
 export const jsify = async (fpath) => {
