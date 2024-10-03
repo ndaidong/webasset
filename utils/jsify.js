@@ -12,7 +12,6 @@ const opt = {
   legalComments: 'none',
   minify: false,
   write: false,
-  banner: { js: '/* eslint-disable */' },
 }
 
 export const transform = async (rawjs, isLive = false) => {
