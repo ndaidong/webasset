@@ -22,25 +22,44 @@ export const domify = (html) => {
 }
 
 const normalize = (html, revision = '') => {
-  const document = domify(html)
+  const doc = domify(html)
 
   const cssGroup = []
   const cssLinks = []
-  document.querySelectorAll('link[rel="stylesheet"]').forEach((elm) => {
+
+  doc.querySelectorAll('link[rel="stylesheet"]').map((elm) => {
     const href = elm.getAttribute('href') || ''
+    const type = elm.getAttribute('type') || ''
+    const rel = elm.getAttribute('rel') || ''
     const group = elm.getAttribute('group') || ''
+    return {
+      href,
+      type,
+      rel,
+      group,
+      elm,
+    }
+  }).filter(({ href }) => {
+    return href !== '' && !isAbsoluteURL(href)
+  }).forEach((linkItem) => {
+    const {
+      href,
+      group,
+      elm,
+    } = linkItem
     if (group) {
       cssGroup.push(group)
-    } else if (href && !isAbsoluteURL(href)) {
+    } else if (href) {
       cssLinks.push(href)
     }
     elm.parentNode.removeChild(elm)
   })
-  const head = document.querySelector('head')
+
+  const head = doc.querySelector('head')
 
   unique(cssGroup).forEach((groupName) => {
     const fpath = `/css/${groupName}.css?rev=${revision}`
-    const styleTag = document.createElement('link')
+    const styleTag = doc.createElement('link')
     styleTag.setAttribute('type', 'text/css')
     styleTag.setAttribute('href', fpath)
     styleTag.setAttribute('rel', 'stylesheet')
@@ -48,7 +67,7 @@ const normalize = (html, revision = '') => {
   })
   unique(cssLinks).forEach((href) => {
     const fpath = href + '?rev=' + revision
-    const styleTag = document.createElement('link')
+    const styleTag = doc.createElement('link')
     styleTag.setAttribute('type', 'text/css')
     styleTag.setAttribute('href', fpath)
     styleTag.setAttribute('rel', 'stylesheet')
@@ -57,7 +76,7 @@ const normalize = (html, revision = '') => {
 
   const jsGroup = []
   const jsLinks = []
-  document.querySelectorAll('script').map((elm) => {
+  doc.querySelectorAll('script').map((elm) => {
     const href = elm.getAttribute('src') || ''
     return {
       href,
@@ -86,17 +105,17 @@ const normalize = (html, revision = '') => {
     }
     elm.parentNode.removeChild(elm)
   })
-  const body = document.querySelector('body')
+  const body = doc.querySelector('body')
 
   unique(jsGroup).forEach((groupName) => {
-    const scriptTag = document.createElement('script')
+    const scriptTag = doc.createElement('script')
     scriptTag.setAttribute('src', `/js/${groupName}.js?rev=${revision}`)
     body.appendChild(scriptTag)
   })
 
   unique(jsLinks).forEach(({ href, type, defer, xasync }) => {
     const fpath = href + '?rev=' + revision
-    const scriptTag = document.createElement('script')
+    const scriptTag = doc.createElement('script')
     scriptTag.setAttribute('src', fpath)
     if (type) {
       scriptTag.setAttribute('type', type)
@@ -110,7 +129,7 @@ const normalize = (html, revision = '') => {
     body.appendChild(scriptTag)
   })
 
-  const output = Array.from(document.children).map(it => it.outerHTML).join('')
+  const output = Array.from(doc.children).map(it => it.outerHTML).join('')
   return output ? '<!DOCTYPE html>' + output : ''
 }
 
